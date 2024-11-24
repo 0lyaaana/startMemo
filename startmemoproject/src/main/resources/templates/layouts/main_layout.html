@@ -14,16 +14,14 @@
 <body>
 	<div class="container">
 		<div th:replace="~{fragments/header::header}"></div>
-		
-		<div class="container-fluid">
-        <div class="row">
-            <!-- 사이드 메뉴 -->
-            <div class="col-4">
-                <div th:replace="~{fragments/side::side}"></div>
-            </div>
-		<!--/* content : 요청 마다 변경되는 부분 */-->
-		<div class="col-8">
-		<div layout:fragment="content"></div>
+		<div class=row>
+			<div class="col-4">
+				<div th:replace="~{fragments/side::side}"></div>
+			</div>
+			<div class="col-8">
+				<!--/* content : 요청 마다 변경되는 부분 */-->
+				<div layout:fragment="content"></div>
+			</div>
 		</div>
 		<!--/* footer */-->
 		<div th:replace="~{fragments/footer::footer}"></div>

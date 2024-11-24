@@ -41,7 +41,7 @@
                 <!-- 데이터가 있을 때 -->
                 <th:block th:if="${not #lists.isEmpty(mList)}">
 	                 <div th:each="memo : ${mList}">
-					     <a th:href="@{memoDetail(no=${memo.no})}" class="list-group-item list-group-item-action my-3">
+					     <a th:href="@{memoDetail?(no=${memo.no})}" class="list-group-item list-group-item-action my-3">
 					         <div class="d-flex w-100 justify-content-between">
 					                <!-- 제목 -->
 					             <h5 class="mb-1" th:text="${memo.title}">title</h5>

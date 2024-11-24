@@ -20,7 +20,7 @@ public class MemoController {
 		return "views/memoList";
 	}
 	
-	@GetMapping("/boardMemo")
+	@GetMapping("/memoDetail")
 	public String getMemo(Model model, @RequestParam("no") int no) {
 		model.addAttribute("memo", memoService.getMemo(no));
 		return "views/memoDetail";

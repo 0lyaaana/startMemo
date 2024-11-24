@@ -15,7 +15,7 @@ main_layout.html에서 지정한 layout:fragment의 이름과 같아야 함
 <th:block layout:fragment="content">
 	<div class="row my-5" id="global-content">
 		<div class="col-10 offset-1">
-			<form name="checkForm" id="checkForm">
+			<form name="checkForm" id="checkForm" action="memoDetail" method="get">
 				<input type="hidden" name="no" id="no" th:value="${memo.no}" /> <input
 					type="hidden" name="pass" id="rPass" />
 			</form>
@@ -61,8 +61,7 @@ main_layout.html에서 지정한 layout:fragment의 이름과 같아야 함
 </th:block></td>
 							</tr>
 							<tr>
-								<td colspan="4" style="white-space: pre">[[${ memo.content
-									}]]</td>
+								<td colspan="4" style="white-space: pre">[[${ memo.content}]]</td>
 							</tr>
 						</tbody>
 					</table>
