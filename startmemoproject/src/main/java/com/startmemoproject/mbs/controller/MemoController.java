@@ -25,5 +25,10 @@ public class MemoController {
 		model.addAttribute("memo", memoService.getMemo(no));
 		return "views/memoDetail";
 	}
+	
+	@GetMapping("/writeForm")
+	public String addMemo() {
+		return "views/writeForm";
+	}
 
 }
