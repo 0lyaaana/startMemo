@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.startmemoproject.mbs.mapper.MemoMapper">
+
+<!-- 메모 리스트 가져오기 -->
+<select id="memoList" resultType="Memo">
+	SELECT *
+	FROM memo
+	ORDER BY no DESC
+</select>
+
+</mapper>

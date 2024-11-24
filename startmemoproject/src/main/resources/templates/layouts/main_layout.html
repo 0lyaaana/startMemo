@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<!--/* Thymeleaf와 Thymeleaf Layout을 사용하기 위한 NameSpace 정의 */-->
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MemoService</title>
+<link th:href="@{bootstrap/bootstrap.min.css}" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+</style>
+</head>
+<body>
+	<div class="container">
+		<div th:replace="~{fragments/header::header}"></div>
+		<!--/* content : 요청 마다 변경되는 부분 */-->
+		<div layout:fragment="content"></div>
+		<!--/* footer */-->
+		<div th:replace="~{fragments/footer::footer}"></div>
+	</div>
+	<script th:src="@{bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
