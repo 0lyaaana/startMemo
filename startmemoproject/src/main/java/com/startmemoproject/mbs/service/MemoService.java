@@ -17,9 +17,16 @@ public class MemoService {
 	@Autowired
 	private MemoMapper memoMapper;
 	
+	// 메모 리스트 가져오기
 	public List<Memo> memoList(){
 		log.info("MemoService: memoList()");
 		return memoMapper.memoList();
+	}
+	
+	// 메모 상세보기
+	public Memo getMemo(int no) {
+		log.info("MemoService: getMemo(int no)");
+		return memoMapper.getMemo(no);
 	}
 
 }

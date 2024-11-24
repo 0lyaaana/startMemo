@@ -10,4 +10,11 @@
 	ORDER BY no DESC
 </select>
 
+<!-- 메모 상세보기 -->
+<select id="getMemo" resultType="Memo">
+	SELECT *
+	FROM memo
+	WHERE no = #{no}
+</select>
+
 </mapper>
