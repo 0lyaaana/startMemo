@@ -17,4 +17,23 @@
 	WHERE no = #{no}
 </select>
 
+<!-- 메모 작성하기 -->
+<insert id="insertMemo" parameterType="Memo" useGeneratedKeys="true" keyProperty="no">
+	INSERT INTO memo(title, writer, content, reg_date, read_count, pass, file1)
+	VALUES(#{title}, #{writer}, #{content}, SYSDATE(), #{readCount}, #{pass}, #{file1})
+</insert>
+
+<!-- 수정하거나 삭제 시, 비밀번호 확인 -->
+<select id="isPassChack">
+	 SELECT pass
+	 FROM memo
+	 WHERE no = #{no}
+</select> 
+
+<update id="updateMemo" parameterType="Memo">
+	UPDATE memo
+	SET title = #{title}, content = #{content} reg_date = SYSDATE()
+	WHERE no = #{no}
+</update>
+
 </mapper>

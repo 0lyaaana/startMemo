@@ -28,5 +28,32 @@ public class MemoService {
 		log.info("MemoService: getMemo(int no)");
 		return memoMapper.getMemo(no);
 	}
+	
+	// 메모 작성하기
+	public void addMemo(Memo memo) {
+		log.info("MemoService: addMemo(Memo memo)");
+		memoMapper.insertMemo(memo);
+	}
+	
+	// 수정 시, 비밀번호 체크하기
+	public boolean isPassCheck(int no, String pass) {
+		
+		boolean result = false;
+		
+		String dbPass = memoMapper.isPassCheck(no);
+		
+		if(dbPass.equals(pass)) {
+			result = true;
+		}
+		
+		return result;
+	}
+	
+	// 메모 수정하기
+	public void updateMemo(Memo memo) {
+		memoMapper.updateMemo(memo);
+	}
+	
+	
 
 }
