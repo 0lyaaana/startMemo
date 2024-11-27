@@ -22,4 +22,6 @@ public interface MemoMapper {
 	public String isPassCheck(int no);
 	
 	public void updateMemo(Memo memo);
+	
+	public void deleteMemo(int no);
 }

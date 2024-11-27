@@ -13,6 +13,7 @@
 			</div>
 			<form name="updateForm" action="/update" id="updateForm"
 				class="row g-3 border-primary" method="post">
+				<input type="hidden" id="no" name="no" th:value="${memo.no}">
 				<div class="col-4 offset-md-2">
 					<label for="writer" class="form-label">작성자</label> <input
 						type="text" class="form-control" name="writer" id="writer"

@@ -54,6 +54,11 @@ public class MemoService {
 		memoMapper.updateMemo(memo);
 	}
 	
+	// 메모 삭제하기
+	public void deleteMemo(int no) {
+		memoMapper.deleteMemo(no);
+	}
+	
 	
 
 }

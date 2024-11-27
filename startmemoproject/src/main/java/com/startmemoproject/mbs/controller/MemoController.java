@@ -44,14 +44,14 @@ public class MemoController {
 	}
 	
 	@PostMapping("/updateForm")
-	public String updateMemo(Model model, HttpServletResponse resp, PrintWriter out, @RequestParam("no") int no, @RequestParam("pass") String pass) {
+	public String updateMemo(Model model, HttpServletResponse resp, PrintWriter out, @RequestParam("no") int no, @RequestParam("pass") String pass) throws Exception {
 		
 		boolean isPassCheck = memoService.isPassCheck(no, pass);
-		if(! isPassCheck) {
+		if(!isPassCheck) {
 			resp.setContentType("text/html; charset=utf-8");
 			out.println("<script>");
-			out.println("비밀번호를 다시 입력해주세요");
-			out.println("history.back()");
+			out.println("alert('비밀번호를 다시 입력해주세요');");
+			out.println("location.href='/memoDetail?no=" + no + "';");
 			out.println("</script>");
 			
 			return null;
@@ -62,10 +62,11 @@ public class MemoController {
 		
 		return "views/updateForm";
 		
+		
 	}
 	
 	@PostMapping("/update")
-	public String updatememo(Model model, Memo memo, @RequestParam("no") int no, @RequestParam("pass") String pass, HttpServletResponse resp, PrintWriter out) {
+	public String updateMemo(Memo memo, @RequestParam("no") int no, @RequestParam("pass") String pass, HttpServletResponse resp, PrintWriter out) {
 		
 		boolean isPassCheck = memoService.isPassCheck(memo.getNo(), memo.getPass());
 
@@ -73,7 +74,7 @@ public class MemoController {
 			
 			resp.setContentType("text/html; charset=utf-8");
 			out.println("<script>");
-			out.println("올바른 비밀번호 입력 바람");
+			out.println("alert('올바른 비밀번호 입력 바람');");
 			out.println("history.beck()");
 			out.println("</script>");
 			
@@ -84,5 +85,29 @@ public class MemoController {
 		
 		return "redirect:memoList";
 	}
+	
+	
+	@PostMapping("/delete")
+	public String deleteMemo(@RequestParam("no") int no, @RequestParam("pass") String pass, HttpServletResponse resp, PrintWriter out) {
+		
+		boolean isPassCheck = memoService.isPassCheck(no, pass);
+		
+		if(! isPassCheck) {
+			
+			resp.setContentType("text/html; charset=utf-8");
+			out.println("<script>");
+			out.println("alert('올바른 비밀번호 입력 바람');");
+			out.println("history.beck()");
+			out.println("</script>");
+			
+			return null;
+		}
+		
+		memoService.deleteMemo(no);
+		return "redirect:memoList";
+	}
+	
+
+
 
 }
