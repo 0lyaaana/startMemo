@@ -34,7 +34,12 @@ public class MemoController {
 	@GetMapping("/memoDetail")
 	public String getMemo(Model model, @RequestParam("no") int no, 
 			@RequestParam(value="pageNum", defaultValue="1") int pageNum) {
-		model.addAttribute("memo", memoService.getMemo(no, true));
+		
+		// true는 메모를 조회하면서 조회 횟수를 1 증가시키는 옵션
+		Memo memo = memoService.getMemo(no, true);
+		
+		model.addAttribute("memo", memo);
+		model.addAttribute("pageNum", pageNum);
 		return "views/memoDetail";
 	}
 	
@@ -50,7 +55,8 @@ public class MemoController {
 	}
 	
 	@PostMapping("/updateForm")
-	public String updateMemo(Model model, HttpServletResponse resp, PrintWriter out, @RequestParam("no") int no, @RequestParam("pass") String pass) throws Exception {
+	public String updateMemo(Model model, HttpServletResponse resp, PrintWriter out, @RequestParam("no") int no, 
+			@RequestParam("pass") String pass, @RequestParam(value="pageNum", defaultValue = "1") int pageNum) throws Exception {
 		
 		boolean isPassCheck = memoService.isPassCheck(no, pass);
 		if(!isPassCheck) {
@@ -63,8 +69,10 @@ public class MemoController {
 			return null;
 		}
 		
-		Memo memo = memoService.getMemo(no);
+		Memo memo = memoService.getMemo(no, false);
+		
 		model.addAttribute("memo", memo);
+		model.addAttribute("pageNum", pageNum);
 		
 		return "views/updateForm";
 		

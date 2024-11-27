@@ -18,6 +18,7 @@ main_layout.html에서 지정한 layout:fragment의 이름과 같아야 함
 			<form name="checkForm" id="checkForm" action="memoDetail" method="get">
 				<input type="hidden" name="no" id="no" th:value="${memo.no}" /> <input
 					type="hidden" name="pass" id="rPass" />
+					<input type="hidden" name="pageNum" th:value="${pageNum}"/>
 			</form>
 			<div class="row text-center">
 				<div class="col">
@@ -73,7 +74,7 @@ main_layout.html에서 지정한 layout:fragment의 이름과 같아야 함
 						value="수정하기" /> &nbsp;&nbsp;<input class="btn btn-danger"
 						type="button" id="detailDelete" value="삭제하기" /> &nbsp;&nbsp;<input
 						class="btn btn-primary" type="button" value="목록보기"
-						onclick="location.href='memoList'" />
+						th:onclick="@{|location.href='memoList?pageNum=${pageNum}'|}" />
 				</div>
 			</div>
 		</div>
