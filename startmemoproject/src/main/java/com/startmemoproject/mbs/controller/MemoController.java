@@ -1,6 +1,7 @@
 package com.startmemoproject.mbs.controller;
 
 import java.io.PrintWriter;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,15 +21,20 @@ public class MemoController {
 	@Autowired
 	private MemoService memoService;
 	
-	@GetMapping({"/", "/memoList"})
-	public String memoList(Model model) {
-		model.addAttribute("mList", memoService.memoList());
+	@GetMapping({"/", "/memoList"})      // value : 요청 파라미터 | required : 필수 조건 | 기본 파라미터
+	public String memoList(Model model, @RequestParam(value="pageNum", required = false, defaultValue="1") int pageNum) {
+		
+		Map<String,Object> modelMap = memoService.memoList(pageNum);
+		
+		model.addAllAttributes(modelMap);
+		
 		return "views/memoList";
 	}
 	
 	@GetMapping("/memoDetail")
-	public String getMemo(Model model, @RequestParam("no") int no) {
-		model.addAttribute("memo", memoService.getMemo(no));
+	public String getMemo(Model model, @RequestParam("no") int no, 
+			@RequestParam(value="pageNum", defaultValue="1") int pageNum) {
+		model.addAttribute("memo", memoService.getMemo(no, true));
 		return "views/memoDetail";
 	}
 	

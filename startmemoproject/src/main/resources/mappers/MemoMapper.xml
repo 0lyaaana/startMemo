@@ -4,10 +4,11 @@
 <mapper namespace="com.startmemoproject.mbs.mapper.MemoMapper">
 
 <!-- 메모 리스트 가져오기 -->
-<select id="memoList" resultType="Memo">
-	SELECT *
+<select id="memoList" parameterType="map" resultType="Memo">
+	SELECT no, title, writer, content, reg_date AS regDate, read_count AS readCount, pass, file1
 	FROM memo
 	ORDER BY no DESC
+	LIMIT #{startRow}, #{num}
 </select>
 
 <!-- 메모 상세보기 -->
@@ -30,16 +31,29 @@
 	 WHERE no = #{no}
 </select> 
 
+<!-- 메모 수정 -->
 <update id="updateMemo" parameterType="Memo">
 	UPDATE memo
 	SET title = #{title}, content = #{content}, reg_date = SYSDATE()
 	WHERE no = #{no}
 </update>
 
+<!-- 메모 삭제 -->
 <delete id="deleteMemo">
 	DELETE 
 	FROM memo
 	WHERE no = #{no}
 </delete>
 
+<!-- 전체 메모 수 반환하는 맵핑 구문 -->
+<select id="getMemoCount">
+	SELECT COUNT(no)
+	FROM memo
+</select>
+
+<update id="memoReadCount">
+	UPDATE memo
+	SET read_count = read_count + 1
+	WHERE no = #{no}
+</update>
 </mapper>
