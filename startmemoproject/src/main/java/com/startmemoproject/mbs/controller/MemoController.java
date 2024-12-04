@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.startmemoproject.mbs.domain.Memo;
 import com.startmemoproject.mbs.service.MemoService;
@@ -22,9 +23,10 @@ public class MemoController {
 	private MemoService memoService;
 	
 	@GetMapping({"/", "/memoList"})      // value : 요청 파라미터 | required : 필수 조건 | 기본 파라미터
-	public String memoList(Model model, @RequestParam(value="pageNum", required = false, defaultValue="1") int pageNum) {
+	public String memoList(Model model, @RequestParam(value="pageNum", required = false, defaultValue="1") int pageNum,
+			@RequestParam(value = "type", required = false, defaultValue = "null") String type, @RequestParam(value = "keyword", required = false, defaultValue = "null") String keyword) {
 		
-		Map<String,Object> modelMap = memoService.memoList(pageNum);
+		Map<String,Object> modelMap = memoService.memoList(pageNum, type, keyword);
 		
 		model.addAllAttributes(modelMap);
 		
@@ -33,13 +35,24 @@ public class MemoController {
 	
 	@GetMapping("/memoDetail")
 	public String getMemo(Model model, @RequestParam("no") int no, 
-			@RequestParam(value="pageNum", defaultValue="1") int pageNum) {
+			@RequestParam(value="pageNum", defaultValue="1") int pageNum,
+			@RequestParam(value="type", defaultValue = "null") String type,
+			@RequestParam(value="keyword", defaultValue = "null") String keyword) {
+		
+		boolean searchOption = (type.equals("null") || keyword.equals("null")) ? false : true;
 		
 		// true는 메모를 조회하면서 조회 횟수를 1 증가시키는 옵션
 		Memo memo = memoService.getMemo(no, true);
 		
 		model.addAttribute("memo", memo);
 		model.addAttribute("pageNum", pageNum);
+		model.addAttribute("searchOption", searchOption);
+		
+		if(searchOption) {
+			model.addAttribute("type", type);
+			model.addAttribute("keyword", keyword);
+		}
+		
 		return "views/memoDetail";
 	}
 	
@@ -56,7 +69,9 @@ public class MemoController {
 	
 	@PostMapping("/updateForm")
 	public String updateMemo(Model model, HttpServletResponse resp, PrintWriter out, @RequestParam("no") int no, 
-			@RequestParam("pass") String pass, @RequestParam(value="pageNum", defaultValue = "1") int pageNum) throws Exception {
+			@RequestParam("pass") String pass, @RequestParam(value="pageNum", defaultValue = "1") int pageNum,
+			@RequestParam(value="type", defaultValue="null") String type,
+			@RequestParam(value="keyword", defaultValue="null") String keyword) throws Exception {
 		
 		boolean isPassCheck = memoService.isPassCheck(no, pass);
 		if(!isPassCheck) {
@@ -71,8 +86,18 @@ public class MemoController {
 		
 		Memo memo = memoService.getMemo(no, false);
 		
+		// 현재 요청이 검색 요청인지 여부를 판단하는 searchOption 설정
+		boolean searchOption = (type.equals("null")
+		|| keyword.equals("null")) ? false : true;
+		
 		model.addAttribute("memo", memo);
 		model.addAttribute("pageNum", pageNum);
+		model.addAttribute("searchOption", searchOption);
+		
+		if(searchOption) {
+			model.addAttribute("type", type);
+			model.addAttribute("keyword", keyword);
+			}
 		
 		return "views/updateForm";
 		
@@ -80,7 +105,9 @@ public class MemoController {
 	}
 	
 	@PostMapping("/update")
-	public String updateMemo(Memo memo, @RequestParam("no") int no, @RequestParam("pass") String pass, HttpServletResponse resp, PrintWriter out) {
+	public String updateMemo(Memo memo, @RequestParam("no") int no, @RequestParam("pass") String pass, HttpServletResponse resp, PrintWriter out,
+			@RequestParam(value="pageNum", defaultValue = "1") int pageNum, RedirectAttributes reAttrs,
+			@RequestParam(value = "type", defaultValue = "null") String type, @RequestParam(value = "keyword", defaultValue = "null") String keyword) {
 		
 		boolean isPassCheck = memoService.isPassCheck(memo.getNo(), memo.getPass());
 
@@ -97,12 +124,25 @@ public class MemoController {
 		
 		memoService.updateMemo(memo);
 		
+		boolean searchOption = (type.equals("null") || keyword.equals("null")) ? false : true;
+		
+		reAttrs.addAttribute("searchOption", searchOption);
+		reAttrs.addAttribute("pageNum", pageNum);
+		
+		if(searchOption) {
+			reAttrs.addAttribute("type", type);
+			reAttrs.addAttribute("keyword", keyword);
+		}
+		
 		return "redirect:memoList";
 	}
 	
 	
 	@PostMapping("/delete")
-	public String deleteMemo(@RequestParam("no") int no, @RequestParam("pass") String pass, HttpServletResponse resp, PrintWriter out) {
+	public String deleteMemo(@RequestParam("no") int no, @RequestParam("pass") String pass, HttpServletResponse resp, PrintWriter out,
+			@RequestParam(value="pageNum", defaultValue = "1") int pageNum, RedirectAttributes reAttrs,
+			@RequestParam(value="type", defaultValue="null") String type,
+			@RequestParam(value="keyword", defaultValue="null") String keyword) {
 		
 		boolean isPassCheck = memoService.isPassCheck(no, pass);
 		
@@ -118,6 +158,17 @@ public class MemoController {
 		}
 		
 		memoService.deleteMemo(no);
+		
+		boolean searchOption = (type.equals("null") || keyword.equals("null")) ? false : true;
+		
+		reAttrs.addAttribute("pageNum", pageNum);
+		reAttrs.addAttribute("searchOption", searchOption);
+		
+		if(searchOption) {
+			reAttrs.addAttribute("type", type);
+			reAttrs.addAttribute("keyword", keyword);
+			}
+		
 		return "redirect:memoList";
 	}
 	

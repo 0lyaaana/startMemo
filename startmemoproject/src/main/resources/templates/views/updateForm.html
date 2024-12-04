@@ -8,13 +8,20 @@
 		<div class="col">
 			<div class="row text-center">
 				<div class="col">
-					<h2 class="fs-3 fw-bold" th:text="#{mbs.update.title}">update memo</h2>
+					<h2 class="fs-3 fw-bold" th:text="#{mbs.update.title}">update
+						memo</h2>
 				</div>
 			</div>
 			<form name="updateForm" action="/update" id="updateForm"
 				class="row g-3 border-primary" method="post">
 				<input type="hidden" id="no" name="no" th:value="${memo.no}">
 				<input type="hidden" id="pageNum" th:value="${pageNum}">
+
+				<th:block th:if=${searchOption}>
+					<input type="hidden" name="type" th:value="${type}" />
+					<input type="hidden" name="keyword" th:value="${keyword}" />
+				</th:block>
+
 				<div class="col-4 offset-md-2">
 					<label for="writer" class="form-label">작성자</label> <input
 						type="text" class="form-control" name="writer" id="writer"
@@ -22,11 +29,13 @@
 				</div>
 				<div class="col-4 ">
 					<label for="pass" class="form-label">비밀번호</label> <input
-						type="password" class="form-control" name="pass" id="pass" th:value="${memo.pass}" readonly>
+						type="password" class="form-control" name="pass" id="pass"
+						th:value="${memo.pass}" readonly>
 				</div>
 				<div class="col-8 offset-md-2">
 					<label for="title" class="form-label">제 목</label> <input
-						type="text" class="form-control" name="title" id="title" th:value="${memo.title}">
+						type="text" class="form-control" name="title" id="title"
+						th:value="${memo.title}">
 				</div>
 				<div class="col-8 offset-md-2">
 					<label for="content" class="form-label">내 용</label>
@@ -34,9 +43,31 @@
 						rows="10">[[${memo.content}]]</textarea>
 				</div>
 				<div class="col-8 offset-md-2 text-center mt-5">
-					<input type="submit" value="등록하기" class="btn btn-primary" />
-					&nbsp;&nbsp;<input type="button" value="목록보기"
-						th:onclick="@{|location.href='boardList?pageNum=${pageNum}'|}" class="btn btn-primary" />
+					
+					<th:block th:unless="${searchOption}">
+&nbsp;&nbsp;<input class="btn btn-primary" type="submit" value="등록하기"
+							th:onclick="@{|location.href='memoList?pageNum=${pageNum}'|}" />
+					</th:block>
+					<!--/*
+검색 리스트에서 온 요청이면 검색 리스트의 동일한 페이지로 돌려보낸다.
+*/-->
+					<th:block th:if="${searchOption}">
+&nbsp;&nbsp;<input class="btn btn-primary" type="submit" value="등록하기"
+							th:onclick="@{|location.href='memoList?pageNum=${pageNum}&type=${type}&keyword=${keyword}'|}" />
+					</th:block>
+					
+
+					<th:block th:unless="${searchOption}">
+&nbsp;&nbsp;<input class="btn btn-primary" type="button" value="목록보기"
+							th:onclick="@{|location.href='memoList?pageNum=${pageNum}'|}" />
+					</th:block>
+					<!--/*
+검색 리스트에서 온 요청이면 검색 리스트의 동일한 페이지로 돌려보낸다.
+*/-->
+					<th:block th:if="${searchOption}">
+&nbsp;&nbsp;<input class="btn btn-primary" type="button" value="목록보기"
+							th:onclick="@{|location.href='memoList?pageNum=${pageNum}&type=${type}&keyword=${keyword}'|}" />
+					</th:block>
 				</div>
 			</form>
 		</div>

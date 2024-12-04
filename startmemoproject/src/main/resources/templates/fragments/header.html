@@ -5,23 +5,48 @@
 <div th:fragment="header" class="row border-bottom border-primary">
 	<div class="col-4">
 		<p class="row">
-			<a  th:href="@{memoList}"><i class="bi bi-battery-charging" style="font-size: 5rem;"></i></a>
+			<a th:href="@{memoList}"><i class="bi bi-battery-charging"
+				style="font-size: 5rem;"></i></a>
 		</p>
 	</div>
 	<div class="col-8 my-1">
 		<div class="row my-2">
 			<div class="col">
 				<ul class="nav justify-content-end">
-					<li class="nav-item"><a class="nav-link" href="#">로그인</a></li>
-					
-					<li class="nav-item"><a class="nav-link" href="#">회원가입</a></li>
-					
+					<li class="nav-item"><th:block th:unless="${session.isLogin}">
+							<a class="nav-link" href="@{loginForm}">로그인</a>
+						</th:block></li>
+
+					<li>
+					<th:block th:if="${session.isLogin}">
+						<!--/* MemberController를 통해서 로그아웃 처리 */-->
+						<a class="nav-link" th:href="@{memberLogout}">로그아웃</a>
+					</th:block>
+					</li>
+					<li class="nav-item"><th:block th:unless="${session.isLogin}">
+							<a th:href="@{#}" class="nav-link"
+								th:attrappend="data-bs-toggle='modal', data-bs-target='#loginModal'">
+								로그아웃-모달 </a>
+						</th:block> <th:block th:if="${session.isLogin}">
+							<!--/* 스프링 시큐리티 설정을 통해서 로그아웃 처리 */-->
+							<a class="nav-link" th:href="@{logout}">로그아웃</a>
+						</th:block></li>
+
+
+					<li class="nav-item"><th:block th:unless="${session.isLogin}">
+							<a class="nav-link" href="#">회원가입</a>
+						</th:block></li>
+
 				</ul>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col text-end">로그인시 인사말 출력</div>
+			<div class="col text-end pe-5 test-primary">
+				<div th:if="${session.isLogin}">
+					[[${session.member != null} ? ${session.member.id}]]님
+				</div>
 		</div>
 	</div>
+</div>
 </div>
 </html>

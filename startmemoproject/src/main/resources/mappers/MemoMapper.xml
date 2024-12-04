@@ -7,6 +7,18 @@
 <select id="memoList" parameterType="map" resultType="Memo">
 	SELECT no, title, writer, content, reg_date AS regDate, read_count AS readCount, pass, file1
 	FROM memo
+	<!-- 검색을 위한 동적 쿼리 -->
+	<where>
+		<if test="type == 'title'">
+		 title LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		<if test="type == 'writer'">
+		 writer LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		<if test="type == 'content'">
+		 content LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+	</where>
 	ORDER BY no DESC
 	LIMIT #{startRow}, #{num}
 </select>
@@ -46,9 +58,20 @@
 </delete>
 
 <!-- 전체 메모 수 반환하는 맵핑 구문 -->
-<select id="getMemoCount">
+<select id="getMemoCount" parameterType="map" resultType="int">
 	SELECT COUNT(no)
 	FROM memo
+	<where>
+		<if test="type == 'title'">
+		 title LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		<if test="type == 'writer'">
+		 writer LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		<if test="type == 'content'">
+		 content LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+	</where>
 </select>
 
 <update id="memoReadCount">

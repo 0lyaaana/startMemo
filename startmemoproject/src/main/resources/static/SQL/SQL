@@ -39,3 +39,8 @@ INSERT INTO memo (title,writer,content,reg_date, read_count, pass, file1) VALUES
 COMMIT;
 
 SELECT * FROM memo ORDER BY no DESC;
+
+
+
+
+

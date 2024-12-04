@@ -11,7 +11,9 @@ import com.startmemoproject.mbs.domain.Memo;
 public interface MemoMapper {
 	
 	// 메모 리스트 가져오기
-	public List<Memo> memoList(@Param("startRow") int startRow, @Param("num") int num);
+	// 맵퍼 XML의 맵핑 구문을 호출하면서 전달해야 할 파라미터가 여러 개일 때 @Param("파라미터 이름") 애노테이션을 사용
+	public List<Memo> memoList(@Param("startRow") int startRow, @Param("num") int num,
+			@Param("type") String type, @Param("keyword") String keyword);
 	
 	// 메모 상세보기
 	public Memo getMemo(int no);
@@ -29,7 +31,7 @@ public interface MemoMapper {
 	public void deleteMemo(int no);
 	
 	// 전체 메모 수 반환하기
-	public int getMemoCount();
+	public int getMemoCount(@Param("type") String type, @Param("keyword") String keyword);
 	
 	public void memoReadCount(int no);
 }

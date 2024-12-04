@@ -1,96 +1,172 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{layouts/main_layout}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/main_layout}">
 
 <!--/* content */-->
 <th:block layout:fragment="content">
-    <div class="row my-5" id="global-content">
-            <!-- 제목 -->
-            <div class="row text-center">
-                <div class="col">
-                    <h2 class="fs-3 fw-bold" th:text="#{mbs.list.title}">메모 리스트</h2>
-                </div>
+	<div class="row my-5" id="global-content">
+		<!-- 제목 -->
+		<div class="row text-center">
+			<div class="col">
+				<h2 class="fs-3 fw-bold" th:text="#{mbs.list.title}">메모 리스트</h2>
+			</div>
+		</div>
+
+		<!-- 검색 폼 -->
+		<form name="searchForm" id="searchForm" action="memoList" method="get"
+			class="row justify-content-center my-3">
+
+			<div class="col-2 text-end">
+				<a th:href="@{writeForm}" class="btn btn-outline-success">글쓰기</a>
+			</div>
+
+			<div class="col-auto">
+				<select name="type" class="form-select">
+					<option value="title">제목</option>
+					<option value="writer">작성자</option>
+					<option value="content">내용</option>
+				</select>
+			</div>
+			<div class="col-4">
+				<input type="text" name="keyword" class="form-control"
+					placeholder="Search.." />
+			</div>
+			<div class="col-auto">
+				<input type="submit" value="검 색" class="btn btn-primary" />
+			</div>
+		</form>
+		<th:block th:if="${searchOption}">
+			<div class="row my-3">
+				<div class="col text-center">
+						<!-- 제목 검색 결과 -->
+						<th:block th:if="${type == 'title'}" th:text="'제목으로 검색한 결과'"></th:block>
+						<!-- 작성자 검색 결과 -->
+						<th:block th:if="${type == 'writer'}" th:text="'작성자로 검색한 결과'"></th:block>
+						<!-- 내용 검색 결과 -->
+						<th:block th:if="${type == 'content'}" th:text="'내용으로 검색한 결과'"></th:block>
+				</div>
+			</div>
+		</th:block>
+
+
+
+
+		<!-- 메모 리스트 출력 -->
+		<div class="list-group row">
+			<div class="col">
+			<!-- 데이터가 있을 때 -->
+			<th:block th:if="${searchOption and not #lists.isEmpty(mList)}">
+				<div class="d-flex w-100 justify-content-center">
+					"[[${keyword}]]"(으)로 포함된 메모가 존재합니다.</div>
+				<div th:each="memo : ${mList}">
+					<a
+						th:href="@{memoDetail(no=${memo.no}, pageNum=${currentPage}, type=${type}, keyword=${keyword})}"
+						class="list-group-item list-group-item-action my-3">
+						<div class="d-flex w-100 justify-content-between">
+							<!-- 제목 -->
+							<h5 class="mb-1" th:text="${memo.title}">title</h5>
+							<!-- 등록일 -->
+							<small th:text="${#dates.format(memo.regDate, 'yyyy-MM-dd')}">day</small>
+						</div> <!-- 내용 -->
+						<p class="mb-1" th:text="${memo.content}">content</p> <!-- 작성자 -->
+						<small th:text="${memo.writer}">writer</small>
+					</a>
+				</div>
+			</th:block>
+
+			<th:block th:if="${searchOption and #lists.isEmpty(mList)}">
+				<div class="d-flex w-100 justify-content-center">
+					"[[${keyword}]]"가 포함된 메모가 존재하지 않습니다.</div>
+			</th:block>
+
+			<th:block th:if="${not searchOption and not #lists.isEmpty(mList)}">
+				<div th:each="memo : ${mList}">
+					<a
+						th:href="@{memoDetail(no=${memo.no}, pageNum=${currentPage}, type=${type}, keyword=${keyword})}"
+						class="list-group-item list-group-item-action my-3">
+						<div class="d-flex w-100 justify-content-between">
+							<!-- 제목 -->
+							<h5 class="mb-1" th:text="${memo.title}">title</h5>
+							<!-- 등록일 -->
+							<small th:text="${#dates.format(memo.regDate, 'yyyy-MM-dd')}">day</small>
+						</div> <!-- 내용 -->
+						<p class="mb-1" th:text="${memo.content}">content</p> <!-- 작성자 -->
+						<small th:text="${memo.writer}">writer</small>
+					</a>
+				</div>
+			</th:block>
+
+
+			<!-- 데이터가 없을 때 -->
+			<th:block th:unless="${searchOption and not #lists.isEmpty(mList)}">
+                   <div class="d-flex w-100 justify-content-center my-3">텅~</div>
+            </th:block>
+            
+            </div>
             </div>
 
-            <!-- 검색 폼 -->
-            <form name="searchForm" id="searchForm" action="memoList" method="get" class="row justify-content-center my-3">
-                
-                <div class="col-2 text-end">
-					<a th:href="@{writeForm}" class="btn btn-outline-success">글쓰기</a>
+
+			<div class="row">
+				<div class="col">
+					<nav aria-label="Page navigation example"
+						th:if="${searchOption and not #lists.isEmpty(mList)}">
+						<ul class="pagination justify-content-center">
+							<!-- 이전 버튼 -->
+							<li class="page-item" th:if="${startPage > pageGroup}"><a
+								class="page-link"
+								th:href="@{|?pageNum=${startPage - 1}&type=${type}&keyword=${keyword}|}"
+								aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+							</a></li>
+
+							<!-- 페이지 번호 출력 -->
+							<!-- startPage에서 endPage까지의 숫자 범위에 대해 반복문을 실행. num은 반복문에서 하나씩 처리되는 값, 페이지 번호를 나타냄. -->
+							<li class="page-item"
+								th:each="num : ${#numbers.sequence(startPage, endPage)}"
+								th:classappend="${num == currentPage} ? 'active'"><th:block
+									th:if="${num != currentPage}">
+									<a class="page-link"
+										th:href="@{|?pageNum=${num}&type=${type}&keyword=${keyword}|}"
+										th:text="${num}"></a>
+								</th:block></li>
+							<!-- 다음 버튼 -->
+							<li class="page-item" th:if="${endPage < pageCount}"><a
+								class="page-link"
+								th:href="@{|?pageNum=${endPage + 1}&type=${type}&keyword=${keyword}|}"
+								aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+							</a></li>
+						</ul>
+					</nav>
+
+					<nav aria-label="Page navigation example"
+						th:if="${not searchOption and not #lists.isEmpty(mList)}">
+						<ul class="pagination justify-content-center">
+							<!-- 이전 버튼 -->
+							<li class="page-item" th:if="${startPage > pageGroup}"><a
+								class="page-link" th:href="@{|?pageNum=${startPage - 1}|}"
+								aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+							</a></li>
+
+							<!-- 페이지 번호 출력 -->
+							<!-- startPage에서 endPage까지의 숫자 범위에 대해 반복문을 실행. num은 반복문에서 하나씩 처리되는 값, 페이지 번호를 나타냄. -->
+							<li class="page-item"
+								th:each="num : ${#numbers.sequence(startPage, endPage)}"
+								th:classappend="${num == currentPage} ? 'active'"><th:block
+									th:if="${num != currentPage}">
+									<a class="page-link" th:href="@{|?pageNum=${num}|}"
+										th:text="${num}"></a>
+								</th:block></li>
+							<!-- 다음 버튼 -->
+							<li class="page-item" th:if="${endPage < pageCount}"><a
+								class="page-link" th:href="@{|?pageNum=${endPage + 1}|}"
+								aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+							</a></li>
+						</ul>
+					</nav>
+
 				</div>
-                
-                <div class="col-auto">
-                    <select name="type" class="form-select">
-                        <option value="title">제목</option>
-                        <option value="writer">작성자</option>
-                        <option value="content">내용</option>
-                    </select>
-                </div>
-                <div class="col-4">
-                    <input type="text" name="keyword" class="form-control" placeholder="Search.." />
-                </div>
-                <div class="col-auto">
-                    <input type="submit" value="검 색" class="btn btn-primary" />
-                </div>
-            </form>
-
-            <!-- 메모 리스트 출력 -->
-            <div class="list-group">
-
-                <!-- 데이터가 있을 때 -->
-                <th:block th:if="${not #lists.isEmpty(mList)}">
-	                 <div th:each="memo : ${mList}">
-					     <a th:href="@{memoDetail(no=${memo.no}, pageNum=${currentPage})}" class="list-group-item list-group-item-action my-3">
-					         <div class="d-flex w-100 justify-content-between">
-					                <!-- 제목 -->
-					             <h5 class="mb-1" th:text="${memo.title}">title</h5>
-					                <!-- 등록일 -->
-					             <small th:text="${#dates.format(memo.regDate, 'yyyy-MM-dd')}">day</small>
-					           </div>
-					            <!-- 내용 -->
-					           <p class="mb-1" th:text="${memo.content}">content</p>
-					            <!-- 작성자 -->
-					           <small th:text="${memo.writer}">writer</small>
-					      </a>
-	    			</div>
-                </th:block>
-
-                <!-- 데이터가 없을 때 -->
-                <th:block th:unless="${not #lists.isEmpty(mList)}">
-                    <a href="#" class="list-group-item list-group-item-action disabled text-center bg-light text-secondary">
-                        텅~
-                    </a>
-                </th:block>
-                
-                
-                <div class="row">
-				    <div class="col">
-				        <nav aria-label="Page navigation example">
-				            <ul class="pagination justify-content-center">
-				                <!-- 이전 버튼 -->
-				                <li class="page-item" th:if="${startPage > pageGroup}">
-				                    <a class="page-link" th:href="@{|?pageNum=${startPage - 1}|}" aria-label="Previous">
-				                        <span aria-hidden="true">&laquo;</span>
-				                    </a>
-				                </li>
-				
-				                <!-- 페이지 번호 출력 -->
-				                <!-- startPage에서 endPage까지의 숫자 범위에 대해 반복문을 실행. num은 반복문에서 하나씩 처리되는 값, 페이지 번호를 나타냄. -->
-				                <li class="page-item" th:each="num : ${#numbers.sequence(startPage, endPage)}">
-				                    <a class="page-link" th:href="@{|?pageNum=${num}|}" th:text="${num}"></a>
-				                </li>
-				                <!-- 다음 버튼 -->
-				                <li class="page-item" th:if="${endPage < pageCount}">
-				                    <a class="page-link" th:href="@{|?pageNum=${endPage + 1}|}" aria-label="Next">
-				                        <span aria-hidden="true">&raquo;</span>
-				                    </a>
-				                </li>
-				            </ul>
-				        </nav>
-				    </div>
-				</div>
-            </div>
-        </div>
+			</div>
+		</div>
+	</div>
 </th:block>
 </html>

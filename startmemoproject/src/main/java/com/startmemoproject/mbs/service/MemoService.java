@@ -26,7 +26,7 @@ public class MemoService {
 	private static final int PAGE_GROUP = 10;
 	
 	// 메모 리스트 가져오기
-	public Map<String, Object> memoList(int pageNum){
+	public Map<String, Object> memoList(int pageNum, String type, String keyword){
 		log.info("MemoService: memoList()");
 		
 		// 현재 페이지로 설정(요청 파라미터 : pageNum)
@@ -35,11 +35,13 @@ public class MemoService {
 		// 현재 페이지에 해당하는 게시글 리스트의 첫 번쨰 행의 값을 계산
 		int startRow = (currentPage - 1) * PAGE_SIZE;
 		
+		boolean searchOption = (type.equals("null") || keyword.equals("null") ? false : true);
+		
 		// 전체 게시글의 수 받아보기
-		int memoListCount = memoMapper.getMemoCount();
+		int memoListCount = memoMapper.getMemoCount(type, keyword);
 		
 		// 현재 페이지에 해당하는 메모 리스트 불러오기
-		List<Memo> memoList = memoMapper.memoList(startRow, PAGE_SIZE);
+		List<Memo> memoList = memoMapper.memoList(startRow, PAGE_SIZE, type, keyword);
 		
 		// 전체 페이지 = 전체 메모 수 / 한 페이지에 표시할 메모 수. 이 계산식에서 나머지가 존재하면 전체 페이지 수는 전체 페이지 + 1이 됨.
 		int pageCount = memoListCount / PAGE_SIZE + (memoListCount % PAGE_SIZE == 0 ? 0: 1);
@@ -64,6 +66,12 @@ public class MemoService {
 		modelMap.put("memoListCount", memoListCount);
 		modelMap.put("currentPage", currentPage);
 		modelMap.put("pageGroup", PAGE_GROUP);
+		modelMap.put("searchOption", searchOption);
+		
+		if(searchOption) {
+			modelMap.put("type", type);
+			modelMap.put("keyword", keyword);
+		}
 		
 		
 		return modelMap;
@@ -112,7 +120,7 @@ public class MemoService {
 	
 	// 전체 메모 수 반환하기
 	public int getMemoCount() {
-		return memoMapper.getMemoCount();
+		return memoMapper.getMemoCount(null, null);
 	}
 	
 	
